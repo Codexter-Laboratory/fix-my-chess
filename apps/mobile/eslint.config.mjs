@@ -6,8 +6,9 @@ export default [
   ...nx.configs['flat/react'],
   {
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    // Override or add rules here
-    rules: {},
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
   },
   {
     ignores: ['public', '.cache', 'node_modules', '**/out-tsc'],

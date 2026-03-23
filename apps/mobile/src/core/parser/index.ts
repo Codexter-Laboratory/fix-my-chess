@@ -1,0 +1,1 @@
+export { parsePgn } from './pgnParser';

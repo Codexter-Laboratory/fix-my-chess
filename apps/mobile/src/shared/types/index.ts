@@ -1,2 +1,17 @@
-// Shared type definitions
-export type {};
+export type {
+  ChessComPlayer,
+  ChessComGame,
+  ChessComArchiveResponse,
+  PlayerColor,
+  ParsedMove,
+  ParsedGame,
+  EngineEvaluation,
+  EvalRequest,
+  BlunderPuzzle,
+  BlunderDetectorResult,
+  GameResult,
+  OpeningRecord,
+  GameOutcome,
+  OpeningStats,
+  ApiError,
+} from './chess';

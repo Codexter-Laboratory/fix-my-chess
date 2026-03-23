@@ -1,2 +1,1 @@
-// Dashboard feature - overview, stats, recent games
-export {};
+export { DashboardScreen } from './ui/DashboardScreen';

@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
 import * as esbuild from 'esbuild';
 import { readFileSync } from 'fs';
+import path from 'path';
 
 const extensions = [
   '.mjs',
@@ -33,6 +34,8 @@ export default defineConfig({
   cacheDir: '../../node_modules/.vite/apps/mobile',
   define: {
     global: 'window',
+    __DEV__: JSON.stringify(true),
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
   },
   resolve: {
     extensions,
@@ -41,6 +44,10 @@ export default defineConfig({
       'react-native-svg': 'react-native-svg-web',
       '@react-native/assets-registry/registry':
         'react-native-web/dist/modules/AssetRegistry/index',
+      'react-native-worklets': path.resolve(
+        import.meta.dirname,
+        'src/stubs/react-native-worklets',
+      ),
     },
   },
   build: {
@@ -48,7 +55,17 @@ export default defineConfig({
     commonjsOptions: { transformMixedEsModules: true },
     outDir: '../../dist/apps/mobile/web',
     rollupOptions: {
-      plugins: [rollupPlugin([/react-native-vector-icons/])],
+      plugins: [
+        rollupPlugin([
+          /react-native-vector-icons/,
+          /react-native-gesture-handler/,
+          /react-native-reanimated/,
+          /react-native-screens/,
+          /react-native-safe-area-context/,
+          /@react-navigation/,
+          /react-native-chart-kit/,
+        ]),
+      ],
     },
   },
   server: {
@@ -64,13 +81,27 @@ export default defineConfig({
     host: 'localhost',
   },
   optimizeDeps: {
+    include: [
+      'react-native-web',
+      'react-native-screens',
+      'react-native-safe-area-context',
+      '@react-navigation/native',
+      '@react-navigation/native-stack',
+      'zustand',
+    ],
+    exclude: ['react-native-worklets'],
     esbuildOptions: {
       resolveExtensions: extensions,
       jsx: 'automatic',
       loader: { '.js': 'jsx' },
     },
   },
-  plugins: [react(), nxViteTsPaths()],
+  plugins: [
+    react({
+      jsxImportSource: 'nativewind',
+    }),
+    nxViteTsPaths(),
+  ],
   // Uncomment this if you are using workers.
   // worker: {
   //   plugins: () => [ nxViteTsPaths() ],

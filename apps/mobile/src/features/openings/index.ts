@@ -1,2 +1,4 @@
-// Openings feature - repertoire analysis, book explorer
-export {};
+export { calculateLeaks, getWorstOpenings } from './logic';
+export { OpeningLeaksScreen } from './ui/OpeningLeaksScreen';
+export { OpeningLeaksScreenNav } from './ui/OpeningLeaksScreenNav';
+export { OpeningDetailScreen } from './ui/OpeningDetailScreen';

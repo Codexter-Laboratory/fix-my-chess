@@ -1,15 +1,16 @@
 import React from 'react';
 import { StatusBar } from 'react-native';
-import { HomeScreen } from '../features/home/ui/HomeScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AppNavigator } from './navigation/AppNavigator';
 
-import '../global.css';
+import '../../global.css';
 
 export function App(): React.ReactElement {
   return (
-    <>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#020617' }}>
       <StatusBar barStyle="light-content" backgroundColor="#020617" />
-      <HomeScreen />
-    </>
+      <AppNavigator />
+    </GestureHandlerRootView>
   );
 }
 
