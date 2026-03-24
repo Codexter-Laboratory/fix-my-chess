@@ -8,8 +8,8 @@ import {
   View,
 } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-import type { ChessComGame, OpeningStats } from '../../../shared/types';
-import { calculateLeaks, getWorstOpenings } from '../logic/calculateLeaks';
+import type { OpeningStats } from '../../../shared/types';
+import { getWorstOpenings } from '../logic/calculateLeaks';
 import { LeakBar } from './LeakBar';
 
 // ---------------------------------------------------------------------------
@@ -17,8 +17,8 @@ import { LeakBar } from './LeakBar';
 // ---------------------------------------------------------------------------
 
 interface OpeningLeaksScreenProps {
-  games: readonly ChessComGame[];
-  username: string;
+  openingStats: readonly OpeningStats[];
+  totalGamesPlayed: number;
   onOpeningPress: (opening: OpeningStats) => void;
 }
 
@@ -53,15 +53,13 @@ const CHART_CONFIG = {
 // ---------------------------------------------------------------------------
 
 export function OpeningLeaksScreen({
-  games,
-  username,
+  openingStats,
+  totalGamesPlayed,
   onOpeningPress,
 }: OpeningLeaksScreenProps): React.ReactElement {
-  const allStats = useMemo(() => calculateLeaks(games, username), [games, username]);
-
   const worstOpenings = useMemo(
-    () => getWorstOpenings(allStats, MIN_GAMES, TOP_N),
-    [allStats],
+    () => getWorstOpenings(openingStats, MIN_GAMES, TOP_N),
+    [openingStats],
   );
 
   const chartData = useMemo(
@@ -72,8 +70,8 @@ export function OpeningLeaksScreen({
     [worstOpenings],
   );
 
-  const totalGamesAnalyzed = allStats.reduce((sum, s) => sum + s.totalGames, 0);
-  const totalOpenings = allStats.length;
+  const totalGamesAnalyzed = totalGamesPlayed;
+  const totalOpenings = openingStats.length;
 
   const [expandedEco, setExpandedEco] = useState<string | null>(null);
 

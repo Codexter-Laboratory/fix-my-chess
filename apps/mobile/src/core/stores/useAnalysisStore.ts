@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import type { BlunderPuzzle, ChessComGame, OpeningStats } from '../../shared/types';
+import { createPlatformStorage } from './storage';
 
 type AnalysisPhase =
   | 'idle'
@@ -10,15 +11,23 @@ type AnalysisPhase =
   | 'complete'
   | 'error';
 
+export interface WinLossStats {
+  readonly totalGames: number;
+  readonly wins: number;
+  readonly losses: number;
+  readonly draws: number;
+}
+
 interface AnalysisState {
-  // --- Persisted data ---
+  // --- Persisted (lightweight insights only) ---
   username: string;
-  games: readonly ChessComGame[];
   openingStats: readonly OpeningStats[];
   blunders: readonly BlunderPuzzle[];
+  winLossStats: WinLossStats;
   lastFetchedAt: number | null;
 
-  // --- Transient (not persisted) ---
+  // --- In-memory only (never persisted) ---
+  games: readonly ChessComGame[];
   phase: AnalysisPhase;
   progress: number;
   error: string | null;
@@ -29,49 +38,54 @@ interface AnalysisState {
   setGames: (games: readonly ChessComGame[]) => void;
   setOpeningStats: (stats: readonly OpeningStats[]) => void;
   setBlunders: (blunders: readonly BlunderPuzzle[]) => void;
+  setWinLossStats: (stats: WinLossStats) => void;
   setProgress: (progress: number) => void;
   setError: (error: string | null) => void;
   markFetched: () => void;
   reset: () => void;
 }
 
-const TRANSIENT_STATE = {
+const EMPTY_STATS: WinLossStats = { totalGames: 0, wins: 0, losses: 0, draws: 0 };
+
+const PERSISTED_DEFAULTS = {
+  username: '',
+  openingStats: [] as readonly OpeningStats[],
+  blunders: [] as readonly BlunderPuzzle[],
+  winLossStats: EMPTY_STATS,
+  lastFetchedAt: null as number | null,
+};
+
+const TRANSIENT_DEFAULTS = {
+  games: [] as readonly ChessComGame[],
   phase: 'idle' as AnalysisPhase,
   progress: 0,
   error: null as string | null,
 };
 
-const PERSISTED_STATE = {
-  username: '',
-  games: [] as readonly ChessComGame[],
-  openingStats: [] as readonly OpeningStats[],
-  blunders: [] as readonly BlunderPuzzle[],
-  lastFetchedAt: null as number | null,
-};
-
 export const useAnalysisStore = create<AnalysisState>()(
   persist(
     (set) => ({
-      ...PERSISTED_STATE,
-      ...TRANSIENT_STATE,
+      ...PERSISTED_DEFAULTS,
+      ...TRANSIENT_DEFAULTS,
       setPhase: (phase) => set({ phase }),
       setUsername: (username) => set({ username }),
       setGames: (games) => set({ games }),
       setOpeningStats: (stats) => set({ openingStats: stats }),
       setBlunders: (blunders) => set({ blunders }),
+      setWinLossStats: (stats) => set({ winLossStats: stats }),
       setProgress: (progress) => set({ progress }),
       setError: (error) => set({ error, phase: error ? 'error' : 'idle' }),
       markFetched: () => set({ lastFetchedAt: Date.now() }),
-      reset: () => set({ ...PERSISTED_STATE, ...TRANSIENT_STATE }),
+      reset: () => set({ ...PERSISTED_DEFAULTS, ...TRANSIENT_DEFAULTS }),
     }),
     {
       name: 'fix-my-chess-analysis',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createPlatformStorage()),
       partialize: (state) => ({
         username: state.username,
-        games: state.games,
         openingStats: state.openingStats,
         blunders: state.blunders,
+        winLossStats: state.winLossStats,
         lastFetchedAt: state.lastFetchedAt,
       }),
     },

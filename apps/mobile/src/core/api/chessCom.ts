@@ -108,6 +108,31 @@ export async function fetchPlayerProfile(
   return response.json();
 }
 
+/**
+ * Lightweight check: does this player have any game archives in the last N months?
+ * Uses the /games/archives endpoint which returns only URLs (no PGN data).
+ */
+export async function hasRecentGames(
+  username: string,
+  months = 3,
+): Promise<boolean> {
+  const url = `${BASE_URL}/player/${encodeURIComponent(username.toLowerCase())}/games/archives`;
+  const response = await fetchWithRetry(url);
+  const data: { archives: string[] } = await response.json();
+
+  if (!data.archives || data.archives.length === 0) return false;
+
+  const now = new Date();
+  const cutoff = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
+
+  return data.archives.some((archiveUrl) => {
+    const match = archiveUrl.match(/\/games\/(\d{4})\/(\d{2})$/);
+    if (!match) return false;
+    const archiveDate = new Date(Number(match[1]), Number(match[2]) - 1, 1);
+    return archiveDate >= cutoff;
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------

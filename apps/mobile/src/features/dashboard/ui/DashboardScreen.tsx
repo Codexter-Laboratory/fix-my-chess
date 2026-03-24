@@ -13,10 +13,10 @@ import type { DashboardScreenProps } from '../../../app/navigation/types';
 export function DashboardScreen({
   navigation,
 }: DashboardScreenProps): React.ReactElement {
-  const { username, games, openingStats, blunders, lastFetchedAt } =
+  const { username, openingStats, blunders, winLossStats, lastFetchedAt } =
     useAnalysisStore();
 
-  const totalGames = games.length;
+  const { totalGames, wins, losses, draws } = winLossStats;
   const totalOpenings = openingStats.length;
   const blunderCount = blunders.length;
   const worstOpenings = useMemo(
@@ -24,19 +24,6 @@ export function DashboardScreen({
     [openingStats],
   );
 
-  const wins = games.filter((g) => {
-    const isWhite =
-      g.white.username.toLowerCase() === username.toLowerCase();
-    return isWhite ? g.white.result === 'win' : g.black.result === 'win';
-  }).length;
-  const losses = games.filter((g) => {
-    const isWhite =
-      g.white.username.toLowerCase() === username.toLowerCase();
-    return isWhite
-      ? g.white.result !== 'win' && g.black.result === 'win'
-      : g.black.result !== 'win' && g.white.result === 'win';
-  }).length;
-  const draws = totalGames - wins - losses;
   const winRate =
     totalGames > 0 ? ((wins / totalGames) * 100).toFixed(0) : '0';
 

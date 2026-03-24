@@ -7,8 +7,10 @@ import {
   View,
 } from 'react-native';
 import { useAnalysisStore } from '../../../core/stores/useAnalysisStore';
+import type { WinLossStats } from '../../../core/stores/useAnalysisStore';
 import { fetchRecentGames } from '../../../core/api/chessCom';
 import { calculateLeaks } from '../../openings/logic/calculateLeaks';
+import type { ChessComGame } from '../../../shared/types';
 import {
   StockfishEngine,
   analyzeGamesForBlunders,
@@ -28,6 +30,28 @@ const PHASE_LABELS: Record<string, string> = {
   complete: 'Done!',
   error: 'Something went wrong.',
 };
+
+function computeWinLoss(games: readonly ChessComGame[], username: string): WinLossStats {
+  const lower = username.toLowerCase();
+  let wins = 0;
+  let losses = 0;
+
+  for (const g of games) {
+    const isWhite = g.white.username.toLowerCase() === lower;
+    const ownResult = isWhite ? g.white.result : g.black.result;
+    const oppResult = isWhite ? g.black.result : g.white.result;
+
+    if (ownResult === 'win') wins++;
+    else if (oppResult === 'win') losses++;
+  }
+
+  return {
+    totalGames: games.length,
+    wins,
+    losses,
+    draws: games.length - wins - losses,
+  };
+}
 
 export function LoadingScreen({
   navigation,
@@ -61,13 +85,12 @@ export function LoadingScreen({
         );
 
         if (games.length === 0) {
-          store.setError(
-            `No games found in the last ${MONTHS_TO_FETCH} months. Try a different username.`,
-          );
+          navigation.replace('Home');
           return;
         }
 
         store.setGames(games);
+        store.setWinLossStats(computeWinLoss(games, username));
         store.setProgress(30);
         store.setPhase('analyzing');
 
