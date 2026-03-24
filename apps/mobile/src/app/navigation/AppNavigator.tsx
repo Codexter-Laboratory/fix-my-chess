@@ -41,7 +41,7 @@ export function AppNavigator(): React.ReactElement {
       const state = useAnalysisStore.getState();
       if (
         isCacheFresh(state.lastFetchedAt) &&
-        state.games.length > 0 &&
+        state.winLossStats.totalGames > 0 &&
         state.username.length > 0
       ) {
         state.setPhase('complete');
@@ -54,7 +54,7 @@ export function AppNavigator(): React.ReactElement {
       const state = useAnalysisStore.getState();
       if (
         isCacheFresh(state.lastFetchedAt) &&
-        state.games.length > 0 &&
+        state.winLossStats.totalGames > 0 &&
         state.username.length > 0
       ) {
         state.setPhase('complete');

@@ -7,7 +7,7 @@ import { OpeningLeaksScreen } from './OpeningLeaksScreen';
 export function OpeningLeaksScreenNav({
   navigation,
 }: OpeningLeaksScreenProps): React.ReactElement {
-  const { games, username } = useAnalysisStore();
+  const { openingStats, winLossStats } = useAnalysisStore();
 
   const handleOpeningPress = useCallback(
     (opening: OpeningStats) => {
@@ -18,8 +18,8 @@ export function OpeningLeaksScreenNav({
 
   return (
     <OpeningLeaksScreen
-      games={games}
-      username={username}
+      openingStats={openingStats}
+      totalGamesPlayed={winLossStats.totalGames}
       onOpeningPress={handleOpeningPress}
     />
   );

@@ -25,6 +25,8 @@ export function OpeningDetailScreen({
   const { games, username } = useAnalysisStore();
   const drawRate = 100 - opening.winRate - opening.lossRate;
 
+  const hasGameData = games.length > 0;
+
   const lostGames = useMemo((): LostGameEntry[] => {
     return opening.lossGameUrls.map((url) => {
       const game = games.find((g) => g.url === url);
@@ -52,8 +54,9 @@ export function OpeningDetailScreen({
     ({ item, index }: { item: LostGameEntry; index: number }) => (
       <TouchableOpacity
         className="mx-4 mb-2 flex-row items-center justify-between rounded-lg border border-slate-800 bg-slate-900 px-4 py-3"
-        onPress={() => handleReview(item)}
-        activeOpacity={0.7}
+        onPress={() => hasGameData && handleReview(item)}
+        activeOpacity={hasGameData ? 0.7 : 1}
+        disabled={!hasGameData}
       >
         <View className="flex-1">
           <Text className="text-sm font-medium text-slate-200">
@@ -63,10 +66,12 @@ export function OpeningDetailScreen({
             Played as {item.color} vs {item.opponent}
           </Text>
         </View>
-        <Text className="text-sm text-indigo-400">Review →</Text>
+        {hasGameData && (
+          <Text className="text-sm text-indigo-400">Review →</Text>
+        )}
       </TouchableOpacity>
     ),
-    [handleReview],
+    [handleReview, hasGameData],
   );
 
   return (
