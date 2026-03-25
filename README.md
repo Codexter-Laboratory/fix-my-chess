@@ -1,101 +1,100 @@
 # FixMyChess
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+FixMyChess is a React Native chess training app. You enter a [Chess.com](https://www.chess.com) username, pull recent games from the public API, and get **opening statistics**, **win/loss summaries**, and **blunder detection** powered by Stockfish. Detected mistakes become a **Daily Blunder Deck** of puzzles (find the best move), with optional **full-game review** at the blunder position.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+This repository is an [Nx](https://nx.dev) monorepo. The main application is `@fix-my-chess/mobile`.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/react-native?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+## Features
 
-## Run tasks
+- **Profile check** — Validates the player exists and has recent games before analysis.
+- **Recent games** — Pulls archived games (default window: last three months) with rate-limit aware fetching.
+- **Opening leaks** — Aggregates results by opening (ECO / name) to surface weak lines.
+- **Engine blunder analysis** — Stockfish evaluation over your moves to find serious mistakes.
+- **Puzzle session** — Replay positions from your own games; review the full game jumped to the blunder ply when needed.
+- **Local cache** — Insights persist per day (Zustand + platform storage) so you are not forced to re-fetch every launch.
 
-To run the dev server for your app, use:
+FixMyChess is not affiliated with Chess.com. It uses their [published public API](https://www.chess.com/news/view/published-data-api) only.
+
+## Tech stack
+
+| Area | Technology |
+|------|------------|
+| Monorepo / tasks | Nx |
+| App | React Native (iOS, Android), React Native Web via Vite for web development |
+| Navigation | React Navigation (native stack) |
+| State | Zustand (persisted) |
+| Chess | chess.js, Stockfish (in-app engine), react-native-chessboard (native) |
+| Styling | NativeWind (Tailwind for RN) |
+| E2E | Playwright (`@fix-my-chess/mobile-e2e`) |
+
+## Requirements
+
+- **Node.js** (LTS recommended) and npm
+- For **iOS**: Xcode and CocoaPods (`pod install` in `apps/mobile/ios` when needed)
+- For **Android**: Android SDK / Android Studio and a device or emulator
+- For **web**: no extra setup beyond `npm install`
+
+## Getting started
+
+From the repository root:
 
 ```sh
-npx nx serve mobile
+npm install
 ```
 
-To create a production bundle:
+### iOS (first time)
 
 ```sh
-npx nx build mobile
+npx nx run-ios mobile
 ```
 
-To see all available targets to run for a project, run:
+If CocoaPods dependencies are missing:
+
+```sh
+npx nx pod-install mobile
+```
+
+## Development commands
+
+Use Nx from the workspace root. The mobile app project name is **`@fix-my-chess/mobile`** (short name **`mobile`** works in most commands).
+
+| Command | Description |
+|---------|-------------|
+| `npx nx dev mobile` | Web dev server (Vite + React Native Web) |
+| `npx nx start mobile` | Metro bundler for native |
+| `npx nx run-ios mobile` | Build and run on iOS simulator / device |
+| `npx nx run-android mobile` | Build and run on Android emulator / device |
+| `npx nx build mobile` | Production web build (`dist/apps/mobile/web`) |
+| `npx nx preview mobile` | Preview the production web build locally |
+| `npx nx lint mobile` | ESLint |
+| `npx nx test mobile` | Jest unit tests |
+| `npx nx typecheck mobile` | TypeScript project references / declarations |
+| `npx nx graph` | Interactive project dependency graph |
+
+List all targets for the app:
 
 ```sh
 npx nx show project mobile
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### End-to-end tests
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
+Playwright tests live in `apps/mobile-e2e`. They depend on the mobile web preview build:
 
 ```sh
-npx nx g @nx/react-native:app demo
+npx nx e2e @fix-my-chess/mobile-e2e
 ```
 
-To generate a new library, use:
+## Repository layout
 
-```sh
-npx nx g @nx/react:lib mylib
+```
+apps/
+  mobile/          # React Native app (source under src/)
+  mobile-e2e/      # Playwright E2E
 ```
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+Shared application code is organized under `apps/mobile/src` (features, core API, engine, navigation, stores).
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## License
 
-## Set up CI!
-
-### Step 1
-
-To connect to Nx Cloud, run the following command:
-
-```sh
-npx nx connect
-```
-
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/nx-api/react-native?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+MIT (see `package.json`).
