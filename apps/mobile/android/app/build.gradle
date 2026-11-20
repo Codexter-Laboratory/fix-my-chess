@@ -72,6 +72,22 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+/**
+ * Release signing. Values are read from Gradle properties (-P or ~/.gradle/gradle.properties)
+ * or environment variables, so no secrets live in the repo:
+ *   FMC_UPLOAD_STORE_FILE, FMC_UPLOAD_STORE_PASSWORD, FMC_UPLOAD_KEY_ALIAS, FMC_UPLOAD_KEY_PASSWORD
+ * When they are absent, release builds fall back to the debug keystore (installable, not for Play Store).
+ */
+def signingValue = { String name ->
+    project.findProperty(name) ?: System.getenv(name)
+}
+def releaseStoreFile = signingValue('FMC_UPLOAD_STORE_FILE')
+def hasReleaseSigning = releaseStoreFile && file(releaseStoreFile).exists()
+
+/** Version can be injected by CI: -PversionCode=42 -PversionName=1.2.0 */
+def appVersionCode = (project.findProperty('versionCode') ?: '1').toString().toInteger()
+def appVersionName = (project.findProperty('versionName') ?: '1.0').toString()
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -82,8 +98,8 @@ android {
         applicationId "com.mobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
     }
     signingConfigs {
         debug {
@@ -92,15 +108,22 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        if (hasReleaseSigning) {
+            release {
+                storeFile file(releaseStoreFile)
+                storePassword signingValue('FMC_UPLOAD_STORE_PASSWORD')
+                keyAlias signingValue('FMC_UPLOAD_KEY_ALIAS')
+                keyPassword signingValue('FMC_UPLOAD_KEY_PASSWORD')
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // See https://reactnative.dev/docs/signed-apk-android and the signing block above.
+            signingConfig hasReleaseSigning ? signingConfigs.release : signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

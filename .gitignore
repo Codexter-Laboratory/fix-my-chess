@@ -80,6 +80,7 @@ local.properties
 .cxx/
 *.keystore
 !debug.keystore
+*.jks
 
 # node.js
 #

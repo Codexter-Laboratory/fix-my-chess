@@ -85,6 +85,38 @@ Playwright tests live in `apps/mobile-e2e`. They depend on the mobile web previe
 npx nx e2e @fix-my-chess/mobile-e2e
 ```
 
+## Android release builds (GitHub Actions)
+
+`.github/workflows/android-release.yml` runs lint, typecheck and tests, then builds a release APK with Gradle:
+
+| Trigger | Result |
+|---------|--------|
+| Pull request / push to `main` / manual run | APK uploaded as the `fix-my-chess-apk` workflow artifact |
+| Push a tag `vX.Y.Z` | Same, plus a GitHub Release with the APK attached (`versionName` = `X.Y.Z`) |
+
+`versionCode` is the workflow run number, so every build installs over the previous one.
+
+### Signing
+
+Without secrets, the APK is signed with the repo's debug keystore: installable for testing, but not suitable for the Play Store. For real releases, create an upload key once:
+
+```sh
+keytool -genkeypair -v -storetype PKCS12 -keystore release.keystore \
+  -alias fixmychess -keyalg RSA -keysize 2048 -validity 10000
+base64 -w0 release.keystore   # macOS: base64 -i release.keystore
+```
+
+Then add these repository secrets (Settings → Secrets and variables → Actions):
+
+- `ANDROID_KEYSTORE_BASE64`: the base64 output above
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`: e.g. `fixmychess`
+- `ANDROID_KEY_PASSWORD`
+
+Keep the keystore safe and out of git (`*.keystore` and `*.jks` are ignored). If you lose it, you can't publish updates to the same app.
+
+To build a signed APK locally, export `FMC_UPLOAD_STORE_FILE`, `FMC_UPLOAD_STORE_PASSWORD`, `FMC_UPLOAD_KEY_ALIAS` and `FMC_UPLOAD_KEY_PASSWORD`, then run `./gradlew assembleRelease` in `apps/mobile/android`.
+
 ## Repository layout
 
 ```
