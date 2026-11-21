@@ -12,7 +12,14 @@ adb install -r "$APK"
 
 adb logcat -c
 adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null
-sleep "$WAIT_SECONDS"
+sleep 10
+
+# Rotate once to force Android to recreate the activity (catches state-restore crashes).
+adb shell settings put system accelerometer_rotation 0
+adb shell settings put system user_rotation 1
+sleep 5
+adb shell settings put system user_rotation 0
+sleep $((WAIT_SECONDS - 15))
 
 adb logcat -d -v time > logcat.txt
 adb exec-out screencap -p > screenshot.png || true
