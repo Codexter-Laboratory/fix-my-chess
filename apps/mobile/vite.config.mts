@@ -42,12 +42,8 @@ export default defineConfig({
     alias: {
       'react-native': 'react-native-web',
       'react-native-svg': 'react-native-svg-web',
-      '@react-native/assets-registry/registry':
-        'react-native-web/dist/modules/AssetRegistry/index',
-      'react-native-worklets': path.resolve(
-        import.meta.dirname,
-        'src/stubs/react-native-worklets',
-      ),
+      '@react-native/assets-registry/registry': 'react-native-web/dist/modules/AssetRegistry/index',
+      'react-native-worklets': path.resolve(import.meta.dirname, 'src/stubs/react-native-worklets'),
     },
   },
   build: {

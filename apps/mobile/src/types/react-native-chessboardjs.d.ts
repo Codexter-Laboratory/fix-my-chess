@@ -5,11 +5,7 @@ declare module 'react-native-chessboardjs' {
   interface ChessboardProps {
     position?: string;
     boardOrientation?: 'white' | 'black';
-    onPieceDrop?: (
-      sourceSquare: string,
-      targetSquare: string,
-      piece: string,
-    ) => boolean;
+    onPieceDrop?: (sourceSquare: string, targetSquare: string, piece: string) => boolean;
     isDraggablePiece?: (args: { piece: string }) => boolean;
     customDarkSquareStyle?: ViewStyle;
     customLightSquareStyle?: ViewStyle;

@@ -17,15 +17,15 @@ FixMyChess is not affiliated with Chess.com. It uses their [published public API
 
 ## Tech stack
 
-| Area | Technology |
-|------|------------|
-| Monorepo / tasks | Nx |
-| App | React Native (iOS, Android), React Native Web via Vite for web development |
-| Navigation | React Navigation (native stack) |
-| State | Zustand (persisted) |
-| Chess | chess.js, Stockfish (in-app engine), react-native-chessboard (native) |
-| Styling | NativeWind (Tailwind for RN) |
-| E2E | Playwright (`@fix-my-chess/mobile-e2e`) |
+| Area             | Technology                                                                 |
+| ---------------- | -------------------------------------------------------------------------- |
+| Monorepo / tasks | Nx                                                                         |
+| App              | React Native (iOS, Android), React Native Web via Vite for web development |
+| Navigation       | React Navigation (native stack)                                            |
+| State            | Zustand (persisted)                                                        |
+| Chess            | chess.js, Stockfish (in-app engine), react-native-chessboard (native)      |
+| Styling          | NativeWind (Tailwind for RN)                                               |
+| E2E              | Playwright (`@fix-my-chess/mobile-e2e`)                                    |
 
 ## Requirements
 
@@ -60,18 +60,18 @@ npx nx pod-install mobile
 
 Use Nx from the workspace root. The mobile app project name is **`@fix-my-chess/mobile`** (short name **`mobile`** works in most commands).
 
-| Command | Description |
-|---------|-------------|
-| `npx nx dev mobile` | Web dev server (Vite + React Native Web) |
-| `npx nx start mobile` | Metro bundler for native |
-| `npx nx run-ios mobile` | Build and run on iOS simulator / device |
-| `npx nx run-android mobile` | Build and run on Android emulator / device |
-| `npx nx build mobile` | Production web build (`dist/apps/mobile/web`) |
-| `npx nx preview mobile` | Preview the production web build locally |
-| `npx nx lint mobile` | ESLint |
-| `npx nx test mobile` | Jest unit tests |
-| `npx nx typecheck mobile` | TypeScript project references / declarations |
-| `npx nx graph` | Interactive project dependency graph |
+| Command                     | Description                                   |
+| --------------------------- | --------------------------------------------- |
+| `npx nx dev mobile`         | Web dev server (Vite + React Native Web)      |
+| `npx nx start mobile`       | Metro bundler for native                      |
+| `npx nx run-ios mobile`     | Build and run on iOS simulator / device       |
+| `npx nx run-android mobile` | Build and run on Android emulator / device    |
+| `npx nx build mobile`       | Production web build (`dist/apps/mobile/web`) |
+| `npx nx preview mobile`     | Preview the production web build locally      |
+| `npx nx lint mobile`        | ESLint                                        |
+| `npx nx test mobile`        | Jest unit tests                               |
+| `npx nx typecheck mobile`   | TypeScript project references / declarations  |
+| `npx nx graph`              | Interactive project dependency graph          |
 
 List all targets for the app:
 

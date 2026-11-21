@@ -5,8 +5,18 @@ const COLS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] as const;
 const ROWS = ['8', '7', '6', '5', '4', '3', '2', '1'] as const;
 
 const PIECE_MAP: Record<string, string> = {
-  K: '\u2654', Q: '\u2655', R: '\u2656', B: '\u2657', N: '\u2658', P: '\u2659',
-  k: '\u265A', q: '\u265B', r: '\u265C', b: '\u265D', n: '\u265E', p: '\u265F',
+  K: '\u2654',
+  Q: '\u2655',
+  R: '\u2656',
+  B: '\u2657',
+  N: '\u2658',
+  P: '\u2659',
+  k: '\u265A',
+  q: '\u265B',
+  r: '\u265C',
+  b: '\u265D',
+  n: '\u265E',
+  p: '\u265F',
 };
 
 const LIGHT = '#94a3b8';

@@ -34,7 +34,11 @@ function extractHeaders(pgn: string): PgnHeaders {
 
   return {
     eco: headers['ECO'] ?? '',
-    opening: headers['ECOUrl']?.split('/').pop()?.replace(/-/g, ' ') ?? headers['Opening'] ?? headers['ECO'] ?? 'Unknown',
+    opening:
+      headers['ECOUrl']?.split('/').pop()?.replace(/-/g, ' ') ??
+      headers['Opening'] ??
+      headers['ECO'] ??
+      'Unknown',
     white: headers['White'] ?? '',
     black: headers['Black'] ?? '',
     result: headers['Result'] ?? '',
@@ -74,7 +78,7 @@ interface AccumulatorEntry {
 
 function buildAccumulator(
   games: readonly ChessComGame[],
-  username: string,
+  username: string
 ): Map<string, AccumulatorEntry> {
   const map = new Map<string, AccumulatorEntry>();
 
@@ -90,12 +94,9 @@ function buildAccumulator(
     const key = `${eco}__${name}`;
 
     const result = resolveResult(headers.result, playerColor);
-    const opponentUsername =
-      playerColor === 'white' ? headers.black : headers.white;
+    const opponentUsername = playerColor === 'white' ? headers.black : headers.white;
     const opponentRating =
-      playerColor === 'white'
-        ? Number(headers.blackElo)
-        : Number(headers.whiteElo);
+      playerColor === 'white' ? Number(headers.blackElo) : Number(headers.whiteElo);
 
     const outcome: GameOutcome = {
       result,
@@ -153,9 +154,7 @@ function computeStats(entry: AccumulatorEntry): OpeningStats {
     asWhite,
     asBlack,
     gameUrls: allOutcomes.map((o) => o.gameUrl),
-    lossGameUrls: allOutcomes
-      .filter((o) => o.result === 'loss')
-      .map((o) => o.gameUrl),
+    lossGameUrls: allOutcomes.filter((o) => o.result === 'loss').map((o) => o.gameUrl),
   };
 }
 
@@ -169,7 +168,7 @@ function computeStats(entry: AccumulatorEntry): OpeningStats {
  */
 export function calculateLeaks(
   games: readonly ChessComGame[],
-  username: string,
+  username: string
 ): readonly OpeningStats[] {
   const accumulator = buildAccumulator(games, username);
   const stats: OpeningStats[] = [];
@@ -188,7 +187,7 @@ export function calculateLeaks(
 export function getWorstOpenings(
   allStats: readonly OpeningStats[],
   minGames = 5,
-  count = 5,
+  count = 5
 ): readonly OpeningStats[] {
   return allStats
     .filter((s) => s.totalGames >= minGames)
@@ -201,8 +200,10 @@ export function getWorstOpenings(
 // ---------------------------------------------------------------------------
 
 function prettifyOpeningName(raw: string): string {
-  return raw
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase())
-    .trim() || 'Unknown Opening';
+  return (
+    raw
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+      .trim() || 'Unknown Opening'
+  );
 }

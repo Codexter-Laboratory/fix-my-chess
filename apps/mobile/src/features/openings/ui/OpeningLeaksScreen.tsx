@@ -1,12 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Dimensions, FlatList, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import type { OpeningStats } from '../../../shared/types';
 import { getWorstOpenings } from '../logic/calculateLeaks';
@@ -59,7 +52,7 @@ export function OpeningLeaksScreen({
 }: OpeningLeaksScreenProps): React.ReactElement {
   const worstOpenings = useMemo(
     () => getWorstOpenings(openingStats, MIN_GAMES, TOP_N),
-    [openingStats],
+    [openingStats]
   );
 
   const chartData = useMemo(
@@ -67,7 +60,7 @@ export function OpeningLeaksScreen({
       labels: worstOpenings.map((o) => truncateLabel(o.eco, 6)),
       datasets: [{ data: worstOpenings.map((o) => Math.round(o.lossRate)) }],
     }),
-    [worstOpenings],
+    [worstOpenings]
   );
 
   const totalGamesAnalyzed = totalGamesPlayed;
@@ -75,12 +68,9 @@ export function OpeningLeaksScreen({
 
   const [expandedEco, setExpandedEco] = useState<string | null>(null);
 
-  const handleToggle = useCallback(
-    (opening: OpeningStats) => {
-      setExpandedEco((prev) => (prev === opening.eco ? null : opening.eco));
-    },
-    [],
-  );
+  const handleToggle = useCallback((opening: OpeningStats) => {
+    setExpandedEco((prev) => (prev === opening.eco ? null : opening.eco));
+  }, []);
 
   const renderItem = useCallback(
     ({ item, index }: { item: OpeningStats; index: number }) => (
@@ -92,7 +82,7 @@ export function OpeningLeaksScreen({
         onDetailPress={() => onOpeningPress(item)}
       />
     ),
-    [expandedEco, handleToggle, onOpeningPress],
+    [expandedEco, handleToggle, onOpeningPress]
   );
 
   const keyExtractor = useCallback((item: OpeningStats) => item.eco + item.name, []);
@@ -103,8 +93,8 @@ export function OpeningLeaksScreen({
       <SafeAreaView className="flex-1 bg-slate-950" style={{ flex: 1, backgroundColor: '#020617' }}>
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-center text-lg text-slate-400">
-            Not enough data yet.{'\n'}Play at least {MIN_GAMES} games with the
-            same opening to see leaks.
+            Not enough data yet.{'\n'}Play at least {MIN_GAMES} games with the same opening to see
+            leaks.
           </Text>
           <Text className="mt-2 text-center text-xs text-slate-600">
             {totalGamesAnalyzed} games across {totalOpenings} openings analyzed
@@ -155,9 +145,7 @@ const ListHeader = React.memo(function ListHeader({
     <View>
       {/* Title */}
       <View className="px-4 pb-1 pt-4">
-        <Text className="text-xl font-semibold text-slate-100">
-          Opening Leaks
-        </Text>
+        <Text className="text-xl font-semibold text-slate-100">Opening Leaks</Text>
         <Text className="mt-1 text-xs text-slate-500">
           Last 3 months · {totalGamesAnalyzed} games · {totalOpenings} openings
         </Text>
@@ -242,9 +230,7 @@ const OpeningLeakCard = React.memo(function OpeningLeakCard({
       <View className="flex-row items-center justify-between">
         <View className="flex-1 flex-row items-center gap-2">
           <View className="h-6 w-6 items-center justify-center rounded bg-red-900/50">
-            <Text className="font-mono text-xs font-bold text-red-400">
-              {rank}
-            </Text>
+            <Text className="font-mono text-xs font-bold text-red-400">{rank}</Text>
           </View>
           <View className="flex-1">
             <Text className="text-sm font-medium text-slate-200" numberOfLines={1}>
@@ -273,27 +259,19 @@ const OpeningLeakCard = React.memo(function OpeningLeakCard({
               value={`${opening.winRate.toFixed(0)}%`}
               color="text-emerald-400"
             />
-            <StatPill
-              label="Draw%"
-              value={`${drawRate.toFixed(0)}%`}
-              color="text-slate-400"
-            />
+            <StatPill label="Draw%" value={`${drawRate.toFixed(0)}%`} color="text-slate-400" />
           </View>
 
           {/* Color split */}
           <View className="mt-2 flex-row justify-between">
             <View className="flex-1 pr-2">
-              <Text className="mb-0.5 text-[9px] uppercase text-slate-600">
-                As White
-              </Text>
+              <Text className="mb-0.5 text-[9px] uppercase text-slate-600">As White</Text>
               <Text className="font-mono text-xs text-slate-300">
                 +{opening.asWhite.wins} −{opening.asWhite.losses} ={opening.asWhite.draws}
               </Text>
             </View>
             <View className="flex-1 pl-2">
-              <Text className="mb-0.5 text-[9px] uppercase text-slate-600">
-                As Black
-              </Text>
+              <Text className="mb-0.5 text-[9px] uppercase text-slate-600">As Black</Text>
               <Text className="font-mono text-xs text-slate-300">
                 +{opening.asBlack.wins} −{opening.asBlack.losses} ={opening.asBlack.draws}
               </Text>
@@ -301,10 +279,7 @@ const OpeningLeakCard = React.memo(function OpeningLeakCard({
           </View>
 
           {/* View games link */}
-          <TouchableOpacity
-            className="mt-3 rounded bg-slate-800 py-2"
-            onPress={onDetailPress}
-          >
+          <TouchableOpacity className="mt-3 rounded bg-slate-800 py-2" onPress={onDetailPress}>
             <Text className="text-center text-xs font-medium text-slate-300">
               View {opening.lossGameUrls.length} lost game
               {opening.lossGameUrls.length !== 1 ? 's' : ''} →
@@ -332,9 +307,7 @@ function StatPill({
   return (
     <View className="items-center">
       <Text className="text-[9px] uppercase text-slate-600">{label}</Text>
-      <Text className={`font-mono text-xs font-semibold ${color}`}>
-        {value}
-      </Text>
+      <Text className={`font-mono text-xs font-semibold ${color}`}>{value}</Text>
     </View>
   );
 }

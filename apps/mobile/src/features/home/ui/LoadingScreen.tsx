@@ -1,21 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  ActivityIndicator,
-  Platform,
-  SafeAreaView,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Platform, SafeAreaView, Text, View } from 'react-native';
 import { useAnalysisStore } from '../../../core/stores/useAnalysisStore';
 import type { WinLossStats } from '../../../core/stores/useAnalysisStore';
 import { fetchRecentGames } from '../../../core/api/chessCom';
 import { calculateLeaks } from '../../openings/logic/calculateLeaks';
 import type { ChessComGame } from '../../../shared/types';
-import {
-  StockfishEngine,
-  analyzeGamesForBlunders,
-  createWebStockfish,
-} from '../../../core/engine';
+import { StockfishEngine, analyzeGamesForBlunders, createWebStockfish } from '../../../core/engine';
 import type { StockfishEngineHandle } from '../../../core/engine';
 import type { LoadingScreenProps } from '../../../app/navigation/types';
 
@@ -53,10 +43,7 @@ function computeWinLoss(games: readonly ChessComGame[], username: string): WinLo
   };
 }
 
-export function LoadingScreen({
-  navigation,
-  route,
-}: LoadingScreenProps): React.ReactElement {
+export function LoadingScreen({ navigation, route }: LoadingScreenProps): React.ReactElement {
   const { username } = route.params;
   const store = useAnalysisStore();
   const hasStarted = useRef(false);
@@ -76,13 +63,9 @@ export function LoadingScreen({
         store.setPhase('fetching');
         store.setProgress(0);
 
-        const games = await fetchRecentGames(
-          username,
-          MONTHS_TO_FETCH,
-          (fetched, total) => {
-            store.setProgress(Math.round((fetched / total) * 25));
-          },
-        );
+        const games = await fetchRecentGames(username, MONTHS_TO_FETCH, (fetched, total) => {
+          store.setProgress(Math.round((fetched / total) * 25));
+        });
 
         if (games.length === 0) {
           navigation.replace('Home');
@@ -113,23 +96,15 @@ export function LoadingScreen({
           try {
             await engine.waitUntilReady();
 
-            const blunders = await analyzeGamesForBlunders(
-              engine,
-              games,
-              username,
-              (progress) => {
-                const gamePercent =
-                  progress.totalGames > 0
-                    ? progress.gameIndex / progress.totalGames
-                    : 0;
-                store.setProgress(50 + Math.round(gamePercent * 45));
-              },
-            );
+            const blunders = await analyzeGamesForBlunders(engine, games, username, (progress) => {
+              const gamePercent =
+                progress.totalGames > 0 ? progress.gameIndex / progress.totalGames : 0;
+              store.setProgress(50 + Math.round(gamePercent * 45));
+            });
 
             store.setBlunders(blunders);
           } catch (engineErr: unknown) {
             // Engine failure is non-fatal — user still gets opening stats
-            // eslint-disable-next-line no-console
             console.warn('[Fix My Chess] Engine analysis failed:', engineErr);
           }
         }
@@ -140,8 +115,7 @@ export function LoadingScreen({
 
         navigation.replace('Dashboard');
       } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to fetch games';
+        const message = err instanceof Error ? err.message : 'Failed to fetch games';
         store.setError(message);
       } finally {
         webEngine?.destroy?.();
@@ -151,10 +125,7 @@ export function LoadingScreen({
   }, []);
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-slate-950"
-      style={{ flex: 1, backgroundColor: '#020617' }}
-    >
+    <SafeAreaView className="flex-1 bg-slate-950" style={{ flex: 1, backgroundColor: '#020617' }}>
       {!IS_WEB && <StockfishEngine ref={engineRef} />}
 
       <View className="flex-1 items-center justify-center px-8">
@@ -164,9 +135,7 @@ export function LoadingScreen({
             <Text className="mt-6 text-center text-lg font-medium text-slate-200">
               {PHASE_LABELS[store.phase] ?? 'Preparing…'}
             </Text>
-            <Text className="mt-2 text-center text-sm text-slate-500">
-              @{username}
-            </Text>
+            <Text className="mt-2 text-center text-sm text-slate-500">@{username}</Text>
 
             <View className="mt-6 h-1.5 w-48 overflow-hidden rounded-full bg-slate-800">
               <View
@@ -183,9 +152,7 @@ export function LoadingScreen({
           </>
         ) : (
           <>
-            <Text className="text-center text-lg font-medium text-red-400">
-              {store.error}
-            </Text>
+            <Text className="text-center text-lg font-medium text-red-400">{store.error}</Text>
             <Text
               className="mt-4 text-center text-sm text-slate-400 underline"
               onPress={() => navigation.replace('Home')}

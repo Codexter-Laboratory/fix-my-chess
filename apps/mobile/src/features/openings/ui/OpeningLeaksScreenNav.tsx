@@ -4,16 +4,14 @@ import type { OpeningLeaksScreenProps } from '../../../app/navigation/types';
 import type { OpeningStats } from '../../../shared/types';
 import { OpeningLeaksScreen } from './OpeningLeaksScreen';
 
-export function OpeningLeaksScreenNav({
-  navigation,
-}: OpeningLeaksScreenProps): React.ReactElement {
+export function OpeningLeaksScreenNav({ navigation }: OpeningLeaksScreenProps): React.ReactElement {
   const { openingStats, winLossStats } = useAnalysisStore();
 
   const handleOpeningPress = useCallback(
     (opening: OpeningStats) => {
       navigation.navigate('OpeningDetail', { opening });
     },
-    [navigation],
+    [navigation]
   );
 
   return (

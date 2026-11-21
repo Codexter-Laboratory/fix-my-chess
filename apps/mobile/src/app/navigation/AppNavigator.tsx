@@ -3,10 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { RootStackParamList } from './types';
-import {
-  useAnalysisStore,
-  isCacheFresh,
-} from '../../core/stores/useAnalysisStore';
+import { useAnalysisStore, isCacheFresh } from '../../core/stores/useAnalysisStore';
 import { HomeScreen } from '../../features/home/ui/HomeScreen';
 import { LoadingScreen } from '../../features/home/ui/LoadingScreen';
 import { DashboardScreen } from '../../features/dashboard/ui/DashboardScreen';
@@ -33,8 +30,7 @@ const MODAL_OPTIONS = {
 
 export function AppNavigator(): React.ReactElement {
   const [hydrated, setHydrated] = useState(false);
-  const [initialRoute, setInitialRoute] =
-    useState<keyof RootStackParamList>('Home');
+  const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList>('Home');
 
   useEffect(() => {
     const unsub = useAnalysisStore.persist.onFinishHydration(() => {
@@ -68,7 +64,14 @@ export function AppNavigator(): React.ReactElement {
 
   if (!hydrated) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#020617', alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#020617',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <ActivityIndicator size="large" color="#6366f1" />
       </View>
     );
@@ -76,10 +79,7 @@ export function AppNavigator(): React.ReactElement {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName={initialRoute}
-        screenOptions={SCREEN_OPTIONS}
-      >
+      <Stack.Navigator initialRouteName={initialRoute} screenOptions={SCREEN_OPTIONS}>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Loading" component={LoadingScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
@@ -99,11 +99,7 @@ export function AppNavigator(): React.ReactElement {
             headerTitle: 'Opening Detail',
           }}
         />
-        <Stack.Screen
-          name="GameViewer"
-          component={GameViewerScreen}
-          options={SCREEN_OPTIONS}
-        />
+        <Stack.Screen name="GameViewer" component={GameViewerScreen} options={SCREEN_OPTIONS} />
         <Stack.Screen
           name="PuzzleSession"
           component={PuzzleSessionScreen}

@@ -25,7 +25,7 @@ export type MoveVerdict = 'correct' | 'incorrect' | 'illegal';
 export function validatePuzzleMove(
   fen: string,
   attempt: MoveAttempt,
-  bestMoveUci: string,
+  bestMoveUci: string
 ): MoveVerdict {
   if (!isLegalMove(fen, attempt)) return 'illegal';
 

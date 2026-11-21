@@ -21,7 +21,7 @@ const ALREADY_LOST_THRESHOLD_CP = -200;
 export function useBlunderDetector(
   pgn: string | null,
   username: string,
-  gameId: string,
+  gameId: string
 ): BlunderDetectorResult & {
   analyze: (engine: StockfishEngineHandle) => Promise<void>;
 } {
@@ -66,10 +66,7 @@ export function useBlunderDetector(
             const scoreAfter = normalizeScore(evalAfter, game.playerColor);
             const drop = scoreBefore - scoreAfter;
 
-            if (
-              drop >= BLUNDER_THRESHOLD_CP &&
-              scoreBefore >= ALREADY_LOST_THRESHOLD_CP
-            ) {
+            if (drop >= BLUNDER_THRESHOLD_CP && scoreBefore >= ALREADY_LOST_THRESHOLD_CP) {
               const fenBefore = getFenBefore(game, i);
               const bestMoveSan = uciToSan(fenBefore, prevEval.bestMove);
 
@@ -101,14 +98,13 @@ export function useBlunderDetector(
 
         setBlunders(found);
       } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : 'Analysis failed';
+        const message = err instanceof Error ? err.message : 'Analysis failed';
         setError(message);
       } finally {
         setIsAnalyzing(false);
       }
     },
-    [pgn, username, gameId],
+    [pgn, username, gameId]
   );
 
   return { blunders, isAnalyzing, progress, error, analyze };
@@ -121,10 +117,7 @@ function getFenBefore(game: ParsedGame, moveIndex: number): string {
   return game.moves[moveIndex - 1].fen;
 }
 
-function normalizeScore(
-  evaluation: EngineEvaluation,
-  color: PlayerColor,
-): number {
+function normalizeScore(evaluation: EngineEvaluation, color: PlayerColor): number {
   return color === 'white' ? evaluation.score : -evaluation.score;
 }
 
@@ -135,10 +128,7 @@ function uciToSan(fen: string, uci: string): string {
     const move = chess.move({
       from: uci.slice(0, 2),
       to: uci.slice(2, 4),
-      promotion:
-        uci.length > 4
-          ? (uci[4] as 'q' | 'r' | 'b' | 'n')
-          : undefined,
+      promotion: uci.length > 4 ? (uci[4] as 'q' | 'r' | 'b' | 'n') : undefined,
     });
     return move ? move.san : uci;
   } catch {

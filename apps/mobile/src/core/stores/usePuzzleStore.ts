@@ -44,21 +44,21 @@ export const usePuzzleStore = create<PuzzleState>((set, get) => ({
   markSolved: () =>
     set((state) => ({
       entries: state.entries.map((e, i) =>
-        i === state.currentIndex ? { ...e, status: 'solved' } : e,
+        i === state.currentIndex ? { ...e, status: 'solved' } : e
       ),
     })),
 
   recordFailedAttempt: () =>
     set((state) => {
       const updatedEntries = state.entries.map((e, i) =>
-        i === state.currentIndex ? { ...e, attempts: e.attempts + 1 } : e,
+        i === state.currentIndex ? { ...e, attempts: e.attempts + 1 } : e
       );
       const newLives = state.lives - 1;
       const failed = newLives <= 0;
       return {
         entries: failed
           ? updatedEntries.map((e, i) =>
-              i === state.currentIndex ? { ...e, status: 'failed' } : e,
+              i === state.currentIndex ? { ...e, status: 'failed' } : e
             )
           : updatedEntries,
         lives: Math.max(0, newLives),
