@@ -42,6 +42,8 @@ From the repository root:
 npm install
 ```
 
+Native dependency versions are pinned to ranges compatible with React Native 0.79 (for example `react-native-reanimated` 4.1.x with `react-native-worklets` 0.5.x). Check the library's compatibility table before upgrading them, as newer releases may require a newer React Native.
+
 ### iOS (first time)
 
 ```sh
@@ -89,10 +91,10 @@ npx nx e2e @fix-my-chess/mobile-e2e
 
 `.github/workflows/android-release.yml` runs lint, typecheck and tests, then builds a release APK with Gradle:
 
-| Trigger | Result |
-|---------|--------|
-| Pull request / push to `main` / manual run | APK uploaded as the `fix-my-chess-apk` workflow artifact |
-| Push a tag `vX.Y.Z` | Same, plus a GitHub Release with the APK attached (`versionName` = `X.Y.Z`) |
+| Trigger                                    | Result                                                                      |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| Pull request / push to `main` / manual run | APK uploaded as the `fix-my-chess-apk` workflow artifact                    |
+| Push a tag `vX.Y.Z`                        | Same, plus a GitHub Release with the APK attached (`versionName` = `X.Y.Z`) |
 
 `versionCode` is the workflow run number, so every build installs over the previous one.
 
@@ -120,8 +122,11 @@ To build a signed APK locally, export `FMC_UPLOAD_STORE_FILE`, `FMC_UPLOAD_STORE
 ## Repository layout
 
 ```
+.github/
+  workflows/       # CI: lint, typecheck, test and release APK build
 apps/
   mobile/          # React Native app (source under src/)
+    android/       # Native Android project (Gradle)
   mobile-e2e/      # Playwright E2E
 ```
 
