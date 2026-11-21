@@ -1,8 +1,4 @@
-import type {
-  ChessComArchiveResponse,
-  ChessComGame,
-  ApiError,
-} from '../../shared/types';
+import type { ChessComArchiveResponse, ChessComGame, ApiError } from '../../shared/types';
 
 const BASE_URL = 'https://api.chess.com/pub';
 const REQUEST_HEADERS: HeadersInit = {
@@ -50,7 +46,7 @@ async function fetchWithRetry(url: string): Promise<Response> {
 export async function fetchMonthlyGames(
   username: string,
   year?: number,
-  month?: number,
+  month?: number
 ): Promise<readonly ChessComGame[]> {
   const now = new Date();
   const y = year ?? now.getFullYear();
@@ -72,7 +68,7 @@ export async function fetchMonthlyGames(
 export async function fetchRecentGames(
   username: string,
   months = 3,
-  onProgress?: (fetched: number, total: number) => void,
+  onProgress?: (fetched: number, total: number) => void
 ): Promise<readonly ChessComGame[]> {
   const archiveUrls = buildRecentArchiveUrls(username, months);
 
@@ -86,7 +82,7 @@ export async function fetchRecentGames(
       fetched++;
       onProgress?.(fetched, archiveUrls.length);
       return data.games;
-    }),
+    })
   );
 
   for (const result of results) {
@@ -101,7 +97,7 @@ export async function fetchRecentGames(
 }
 
 export async function fetchPlayerProfile(
-  username: string,
+  username: string
 ): Promise<{ username: string; avatar?: string; joined: number }> {
   const url = `${BASE_URL}/player/${encodeURIComponent(username.toLowerCase())}`;
   const response = await fetchWithRetry(url);
@@ -112,10 +108,7 @@ export async function fetchPlayerProfile(
  * Lightweight check: does this player have any game archives in the last N months?
  * Uses the /games/archives endpoint which returns only URLs (no PGN data).
  */
-export async function hasRecentGames(
-  username: string,
-  months = 3,
-): Promise<boolean> {
+export async function hasRecentGames(username: string, months = 3): Promise<boolean> {
   const url = `${BASE_URL}/player/${encodeURIComponent(username.toLowerCase())}/games/archives`;
   const response = await fetchWithRetry(url);
   const data: { archives: string[] } = await response.json();

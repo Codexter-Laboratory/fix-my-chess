@@ -1,8 +1,7 @@
 import type { EngineEvaluation, EvalRequest } from '../../shared/types';
 import type { StockfishEngineHandle } from './StockfishEngine';
 
-const STOCKFISH_CDN =
-  'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js';
+const STOCKFISH_CDN = 'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js';
 
 const EVAL_TIMEOUT_MS = 30_000;
 const READY_TIMEOUT_MS = 15_000;
@@ -35,10 +34,7 @@ export function createWebStockfish(): StockfishEngineHandle {
   const readyResolvers: Array<() => void> = [];
 
   try {
-    const blob = new Blob(
-      [`importScripts('${STOCKFISH_CDN}');`],
-      { type: 'text/javascript' },
-    );
+    const blob = new Blob([`importScripts('${STOCKFISH_CDN}');`], { type: 'text/javascript' });
     const blobUrl = URL.createObjectURL(blob);
     worker = new Worker(blobUrl);
     URL.revokeObjectURL(blobUrl);

@@ -1,1 +1,6 @@
-export { fetchMonthlyGames, fetchRecentGames, fetchPlayerProfile, hasRecentGames } from './chessCom';
+export {
+  fetchMonthlyGames,
+  fetchRecentGames,
+  fetchPlayerProfile,
+  hasRecentGames,
+} from './chessCom';

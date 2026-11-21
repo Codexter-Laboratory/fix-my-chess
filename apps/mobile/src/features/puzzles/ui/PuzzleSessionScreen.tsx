@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Dimensions,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Dimensions, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { Chess, type Square } from 'chess.js';
 import { ChessBoard } from '../../../shared/ui/ChessBoard';
 import { useAnalysisStore } from '../../../core/stores/useAnalysisStore';
@@ -24,17 +18,12 @@ function hintSquareFromUci(uci: string): string {
 
 function buildInstruction(puzzle: BlunderPuzzle): string {
   const dropPawns = (puzzle.evalDrop / 100).toFixed(1);
-  return (
-    `You played ${puzzle.badMove} (−${dropPawns} pawns). ` +
-    `Find the engine's best move.`
-  );
+  return `You played ${puzzle.badMove} (−${dropPawns} pawns). Find the engine's best move.`;
 }
 
 const PLAYER_COLOR_MAP = { white: 'w', black: 'b' } as const;
 
-export function PuzzleSessionScreen({
-  navigation,
-}: PuzzleSessionScreenProps): React.ReactElement {
+export function PuzzleSessionScreen({ navigation }: PuzzleSessionScreenProps): React.ReactElement {
   const blunders = useAnalysisStore((s) => s.blunders);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -123,14 +112,11 @@ export function PuzzleSessionScreen({
         const srcPiece = chess.get(selectedSquare as Square);
 
         const isPromotion =
-          srcPiece && srcPiece.type === 'p' &&
-          (square[1] === '8' || square[1] === '1');
+          srcPiece && srcPiece.type === 'p' && (square[1] === '8' || square[1] === '1');
 
         const fullUci = isPromotion ? uciMove + 'q' : uciMove;
 
-        const isCorrect =
-          fullUci === bestUci ||
-          uciMove === bestUci.slice(0, 4);
+        const isCorrect = fullUci === bestUci || uciMove === bestUci.slice(0, 4);
 
         try {
           chess.move({
@@ -168,7 +154,7 @@ export function PuzzleSessionScreen({
         }
       }
     },
-    [chess, selectedSquare, puzzle, status, attempts, flash],
+    [chess, selectedSquare, puzzle, status, attempts, flash]
   );
 
   const handleHint = useCallback(() => {
@@ -206,10 +192,7 @@ export function PuzzleSessionScreen({
 
   if (!puzzle) {
     return (
-      <SafeAreaView
-        className="flex-1 bg-slate-950"
-        style={{ flex: 1, backgroundColor: '#020617' }}
-      >
+      <SafeAreaView className="flex-1 bg-slate-950" style={{ flex: 1, backgroundColor: '#020617' }}>
         <View className="flex-1 items-center justify-center px-8">
           <Text className="text-center text-lg font-medium text-slate-300">
             No blunders to review.
@@ -241,17 +224,10 @@ export function PuzzleSessionScreen({
 
   const borderColor =
     flashColor ??
-    (status === 'correct'
-      ? '#22c55e'
-      : status === 'gaveUp'
-        ? '#f59e0b'
-        : 'transparent');
+    (status === 'correct' ? '#22c55e' : status === 'gaveUp' ? '#f59e0b' : 'transparent');
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-slate-950"
-      style={{ flex: 1, backgroundColor: '#020617' }}
-    >
+    <SafeAreaView className="flex-1 bg-slate-950" style={{ flex: 1, backgroundColor: '#020617' }}>
       {/* Top bar */}
       <View className="flex-row items-center justify-between px-5 pb-2 pt-4">
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -285,15 +261,12 @@ export function PuzzleSessionScreen({
             width: 10,
             height: 10,
             borderRadius: 5,
-            backgroundColor:
-              puzzle.playerColor === 'white' ? '#fff' : '#1e293b',
+            backgroundColor: puzzle.playerColor === 'white' ? '#fff' : '#1e293b',
             borderWidth: 1,
             borderColor: '#475569',
           }}
         />
-        <Text className="text-xs text-slate-500">
-          Your turn as {puzzle.playerColor}
-        </Text>
+        <Text className="text-xs text-slate-500">Your turn as {puzzle.playerColor}</Text>
       </View>
 
       {/* Board */}
@@ -323,17 +296,11 @@ export function PuzzleSessionScreen({
       {/* Move info badges */}
       <View className="mt-3 flex-row justify-center gap-3">
         <View className="rounded-lg bg-slate-900 px-3 py-1.5">
-          <Text className="text-[10px] uppercase text-slate-500">
-            You played
-          </Text>
-          <Text className="font-mono text-sm font-bold text-red-400">
-            {puzzle.badMove}
-          </Text>
+          <Text className="text-[10px] uppercase text-slate-500">You played</Text>
+          <Text className="font-mono text-sm font-bold text-red-400">{puzzle.badMove}</Text>
         </View>
         <View className="rounded-lg bg-slate-900 px-3 py-1.5">
-          <Text className="text-[10px] uppercase text-slate-500">
-            Best move
-          </Text>
+          <Text className="text-[10px] uppercase text-slate-500">Best move</Text>
           <Text className="font-mono text-sm font-bold text-emerald-400">
             {isFinished ? puzzle.bestMoveSan : '???'}
           </Text>
@@ -356,27 +323,24 @@ export function PuzzleSessionScreen({
         {status === 'wrong' && (
           <Text className="text-sm font-semibold leading-5 text-red-400">
             Not quite — try again!{' '}
-            {attempts >= 2 && !canGiveUp && `(${MAX_ATTEMPTS_BEFORE_GIVEUP - attempts} more before you can reveal)`}
+            {attempts >= 2 &&
+              !canGiveUp &&
+              `(${MAX_ATTEMPTS_BEFORE_GIVEUP - attempts} more before you can reveal)`}
           </Text>
         )}
         {status === 'correct' && (
           <View className="rounded-lg bg-emerald-900/30 p-3">
             <Text className="text-center text-sm font-semibold text-emerald-400">
               Correct! The best move was{' '}
-              <Text className="font-mono font-bold">
-                {puzzle.bestMoveSan}
-              </Text>
+              <Text className="font-mono font-bold">{puzzle.bestMoveSan}</Text>
             </Text>
           </View>
         )}
         {status === 'gaveUp' && (
           <View className="rounded-lg bg-amber-900/30 p-3">
             <Text className="text-center text-sm font-semibold text-amber-400">
-              The best move was{' '}
-              <Text className="font-mono font-bold">
-                {puzzle.bestMoveSan}
-              </Text>{' '}
-              ({evalBeforeStr} → {evalAfterStr})
+              The best move was <Text className="font-mono font-bold">{puzzle.bestMoveSan}</Text> (
+              {evalBeforeStr} → {evalAfterStr})
             </Text>
           </View>
         )}
@@ -411,9 +375,7 @@ export function PuzzleSessionScreen({
                 onPress={handleGiveUp}
                 activeOpacity={0.7}
               >
-                <Text className="text-sm font-semibold text-amber-400">
-                  Give Up
-                </Text>
+                <Text className="text-sm font-semibold text-amber-400">Give Up</Text>
               </TouchableOpacity>
             )}
 
@@ -422,9 +384,7 @@ export function PuzzleSessionScreen({
               onPress={handleNext}
               activeOpacity={0.7}
             >
-              <Text className="text-sm font-semibold text-slate-400">
-                Skip
-              </Text>
+              <Text className="text-sm font-semibold text-slate-400">Skip</Text>
             </TouchableOpacity>
           </>
         ) : (

@@ -31,7 +31,7 @@ export async function analyzeGamesForBlunders(
   engine: StockfishEngineHandle,
   games: readonly ChessComGame[],
   username: string,
-  onProgress?: (progress: AnalysisProgress) => void,
+  onProgress?: (progress: AnalysisProgress) => void
 ): Promise<BlunderPuzzle[]> {
   const allBlunders: BlunderPuzzle[] = [];
 
@@ -42,20 +42,15 @@ export async function analyzeGamesForBlunders(
     if (!game.pgn) continue;
 
     try {
-      const gameBlunders = await analyzeOneGame(
-        engine,
-        game,
-        username,
-        (moveIndex, totalMoves) => {
-          onProgress?.({
-            gameIndex: gi,
-            totalGames: games.length,
-            moveIndex,
-            totalMoves,
-            blundersFound: allBlunders.length,
-          });
-        },
-      );
+      const gameBlunders = await analyzeOneGame(engine, game, username, (moveIndex, totalMoves) => {
+        onProgress?.({
+          gameIndex: gi,
+          totalGames: games.length,
+          moveIndex,
+          totalMoves,
+          blundersFound: allBlunders.length,
+        });
+      });
 
       allBlunders.push(...gameBlunders);
     } catch {
@@ -70,11 +65,10 @@ async function analyzeOneGame(
   engine: StockfishEngineHandle,
   game: ChessComGame,
   username: string,
-  onMoveProgress?: (moveIndex: number, totalMoves: number) => void,
+  onMoveProgress?: (moveIndex: number, totalMoves: number) => void
 ): Promise<BlunderPuzzle[]> {
   const gameId = game.url.split('/').pop() ?? game.url;
   const parsed = parsePgn(game.pgn, username, gameId);
-  const playerMoveIndices = getPlayerMoveIndices(parsed);
   const blunders: BlunderPuzzle[] = [];
 
   let prevEval: EngineEvaluation | null = null;
@@ -126,13 +120,6 @@ async function analyzeOneGame(
   }
 
   return blunders;
-}
-
-function getPlayerMoveIndices(game: ParsedGame): number[] {
-  return game.moves
-    .map((move, index) => ({ move, index }))
-    .filter(({ move }) => move.color === game.playerColor)
-    .map(({ index }) => index);
 }
 
 function getFenBefore(game: ParsedGame, moveIndex: number): string {

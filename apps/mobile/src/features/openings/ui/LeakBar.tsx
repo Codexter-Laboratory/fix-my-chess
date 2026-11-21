@@ -26,31 +26,19 @@ export const LeakBar = React.memo(function LeakBar({
             {label}
           </Text>
         </View>
-        <Text className="ml-2 font-mono text-[10px] text-slate-500">
-          {totalGames}g
-        </Text>
+        <Text className="ml-2 font-mono text-[10px] text-slate-500">{totalGames}g</Text>
       </View>
 
       {/* Stacked bar track */}
       <View className="h-5 flex-row overflow-hidden rounded-sm bg-slate-800">
-        <View
-          style={{ width: `${Math.round(lossRate)}%` }}
-          className="h-full bg-red-700"
-        />
-        <View
-          style={{ width: `${Math.round(winRate)}%` }}
-          className="h-full bg-emerald-700"
-        />
+        <View style={{ width: `${Math.round(lossRate)}%` }} className="h-full bg-red-700" />
+        <View style={{ width: `${Math.round(winRate)}%` }} className="h-full bg-emerald-700" />
       </View>
 
       {/* Percent labels */}
       <View className="mt-0.5 flex-row justify-between">
-        <Text className="font-mono text-[10px] text-red-400">
-          {lossRate.toFixed(0)}% L
-        </Text>
-        <Text className="font-mono text-[10px] text-emerald-400">
-          {winRate.toFixed(0)}% W
-        </Text>
+        <Text className="font-mono text-[10px] text-red-400">{lossRate.toFixed(0)}% L</Text>
+        <Text className="font-mono text-[10px] text-emerald-400">{winRate.toFixed(0)}% W</Text>
       </View>
     </View>
   );

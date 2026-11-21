@@ -22,7 +22,8 @@ const customConfig = {
   },
 };
 
-const mergedConfig = withNxMetro(mergeConfig(defaultConfig, customConfig), {
+// withNxMetro is async, so NativeWind must wrap the resolved config, not the Promise.
+module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
   // Change this to true to see debugging info.
   // Useful if you have issues resolving modules
   debug: false,
@@ -30,6 +31,4 @@ const mergedConfig = withNxMetro(mergeConfig(defaultConfig, customConfig), {
   extensions: [],
   // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
   watchFolders: [],
-});
-
-module.exports = withNativeWind(mergedConfig, { input: './global.css' });
+}).then((config) => withNativeWind(config, { input: './global.css' }));

@@ -1,11 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import {
-  Dimensions,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Dimensions, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { Chess } from 'chess.js';
 import { ChessBoard } from '../../../shared/ui/ChessBoard';
 import { useAnalysisStore } from '../../../core/stores/useAnalysisStore';
@@ -32,8 +26,8 @@ function buildReplay(pgn: string, username: string): ReplayState | null {
     const isWhite = headers['White']?.toLowerCase() === username.toLowerCase();
     const playerColor: PlayerColor = isWhite ? 'white' : 'black';
     const opponentName = isWhite
-      ? headers['Black'] ?? 'Unknown'
-      : headers['White'] ?? 'Unknown';
+      ? (headers['Black'] ?? 'Unknown')
+      : (headers['White'] ?? 'Unknown');
     const result = headers['Result'] ?? '*';
 
     const history = chess.history({ verbose: true });
@@ -54,17 +48,11 @@ function buildReplay(pgn: string, username: string): ReplayState | null {
   }
 }
 
-export function GameViewerScreen({
-  navigation,
-  route,
-}: GameViewerScreenProps): React.ReactElement {
+export function GameViewerScreen({ navigation, route }: GameViewerScreenProps): React.ReactElement {
   const { gameUrl } = route.params;
   const { games, username } = useAnalysisStore();
 
-  const game = useMemo(
-    () => games.find((g) => g.url === gameUrl),
-    [games, gameUrl],
-  );
+  const game = useMemo(() => games.find((g) => g.url === gameUrl), [games, gameUrl]);
 
   const replay = useMemo(() => {
     if (!game?.pgn) return null;
@@ -76,11 +64,7 @@ export function GameViewerScreen({
 
   const orientation = useMemo((): PlayerColor => {
     if (!replay) return 'white';
-    return flipped
-      ? replay.playerColor === 'white'
-        ? 'black'
-        : 'white'
-      : replay.playerColor;
+    return flipped ? (replay.playerColor === 'white' ? 'black' : 'white') : replay.playerColor;
   }, [replay, flipped]);
 
   const lastMoveSquares = useMemo(() => {
@@ -116,14 +100,9 @@ export function GameViewerScreen({
 
   if (!game || !replay) {
     return (
-      <SafeAreaView
-        className="flex-1 bg-slate-950"
-        style={{ flex: 1, backgroundColor: '#020617' }}
-      >
+      <SafeAreaView className="flex-1 bg-slate-950" style={{ flex: 1, backgroundColor: '#020617' }}>
         <View className="flex-1 items-center justify-center px-8">
-          <Text className="text-center text-lg font-medium text-slate-300">
-            Game not found.
-          </Text>
+          <Text className="text-center text-lg font-medium text-slate-300">Game not found.</Text>
           <TouchableOpacity
             className="mt-6 rounded-xl bg-indigo-600 px-8 py-3"
             onPress={() => navigation.goBack()}
@@ -152,18 +131,13 @@ export function GameViewerScreen({
           : replay.result;
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-slate-950"
-      style={{ flex: 1, backgroundColor: '#020617' }}
-    >
+    <SafeAreaView className="flex-1 bg-slate-950" style={{ flex: 1, backgroundColor: '#020617' }}>
       {/* Top bar */}
       <View className="flex-row items-center justify-between px-5 pb-2 pt-4">
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text className="text-sm text-slate-400">← Back</Text>
         </TouchableOpacity>
-        <Text className="text-sm font-semibold text-slate-300">
-          Game Review
-        </Text>
+        <Text className="text-sm font-semibold text-slate-300">Game Review</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -199,9 +173,7 @@ export function GameViewerScreen({
       {/* Move label */}
       <View className="mt-3 items-center">
         <View className="rounded-lg bg-slate-900 px-4 py-2">
-          <Text className="font-mono text-sm text-slate-300">
-            {moveLabel}
-          </Text>
+          <Text className="font-mono text-sm text-slate-300">{moveLabel}</Text>
         </View>
         <Text className="mt-1 text-[10px] text-slate-600">
           Move {moveIndex} of {totalMoves}
@@ -232,11 +204,7 @@ export function GameViewerScreen({
           const moveNum = Math.floor(i / 2) + 1;
           const showNum = i % 2 === 0;
           return (
-            <TouchableOpacity
-              key={i}
-              onPress={() => setMoveIndex(i + 1)}
-              activeOpacity={0.7}
-            >
+            <TouchableOpacity key={i} onPress={() => setMoveIndex(i + 1)} activeOpacity={0.7}>
               <Text
                 className={`font-mono text-xs ${
                   isActive
@@ -244,14 +212,13 @@ export function GameViewerScreen({
                     : 'px-0.5 text-slate-500'
                 }`}
               >
-                {showNum ? `${moveNum}.` : ''}{m.san}
+                {showNum ? `${moveNum}.` : ''}
+                {m.san}
               </Text>
             </TouchableOpacity>
           );
         })}
-        {replay.moves.length > 40 && (
-          <Text className="px-1 text-xs text-slate-600">…</Text>
-        )}
+        {replay.moves.length > 40 && <Text className="px-1 text-xs text-slate-600">…</Text>}
       </View>
     </SafeAreaView>
   );
@@ -277,11 +244,7 @@ function ControlButton({
       disabled={disabled}
       activeOpacity={0.7}
     >
-      <Text
-        className={`text-base ${disabled ? 'text-slate-700' : 'text-slate-300'}`}
-      >
-        {label}
-      </Text>
+      <Text className={`text-base ${disabled ? 'text-slate-700' : 'text-slate-300'}`}>{label}</Text>
     </TouchableOpacity>
   );
 }

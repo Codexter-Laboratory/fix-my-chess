@@ -17,15 +17,15 @@ FixMyChess is not affiliated with Chess.com. It uses their [published public API
 
 ## Tech stack
 
-| Area | Technology |
-|------|------------|
-| Monorepo / tasks | Nx |
-| App | React Native (iOS, Android), React Native Web via Vite for web development |
-| Navigation | React Navigation (native stack) |
-| State | Zustand (persisted) |
-| Chess | chess.js, Stockfish (in-app engine), react-native-chessboard (native) |
-| Styling | NativeWind (Tailwind for RN) |
-| E2E | Playwright (`@fix-my-chess/mobile-e2e`) |
+| Area             | Technology                                                                 |
+| ---------------- | -------------------------------------------------------------------------- |
+| Monorepo / tasks | Nx                                                                         |
+| App              | React Native (iOS, Android), React Native Web via Vite for web development |
+| Navigation       | React Navigation (native stack)                                            |
+| State            | Zustand (persisted)                                                        |
+| Chess            | chess.js, Stockfish (in-app engine), react-native-chessboard (native)      |
+| Styling          | NativeWind (Tailwind for RN)                                               |
+| E2E              | Playwright (`@fix-my-chess/mobile-e2e`)                                    |
 
 ## Requirements
 
@@ -41,6 +41,8 @@ From the repository root:
 ```sh
 npm install
 ```
+
+Native dependency versions are pinned to ranges compatible with React Native 0.79 (for example `react-native-reanimated` 4.1.x with `react-native-worklets` 0.5.x). Check the library's compatibility table before upgrading them, as newer releases may require a newer React Native.
 
 ### iOS (first time)
 
@@ -58,18 +60,18 @@ npx nx pod-install mobile
 
 Use Nx from the workspace root. The mobile app project name is **`@fix-my-chess/mobile`** (short name **`mobile`** works in most commands).
 
-| Command | Description |
-|---------|-------------|
-| `npx nx dev mobile` | Web dev server (Vite + React Native Web) |
-| `npx nx start mobile` | Metro bundler for native |
-| `npx nx run-ios mobile` | Build and run on iOS simulator / device |
-| `npx nx run-android mobile` | Build and run on Android emulator / device |
-| `npx nx build mobile` | Production web build (`dist/apps/mobile/web`) |
-| `npx nx preview mobile` | Preview the production web build locally |
-| `npx nx lint mobile` | ESLint |
-| `npx nx test mobile` | Jest unit tests |
-| `npx nx typecheck mobile` | TypeScript project references / declarations |
-| `npx nx graph` | Interactive project dependency graph |
+| Command                     | Description                                   |
+| --------------------------- | --------------------------------------------- |
+| `npx nx dev mobile`         | Web dev server (Vite + React Native Web)      |
+| `npx nx start mobile`       | Metro bundler for native                      |
+| `npx nx run-ios mobile`     | Build and run on iOS simulator / device       |
+| `npx nx run-android mobile` | Build and run on Android emulator / device    |
+| `npx nx build mobile`       | Production web build (`dist/apps/mobile/web`) |
+| `npx nx preview mobile`     | Preview the production web build locally      |
+| `npx nx lint mobile`        | ESLint                                        |
+| `npx nx test mobile`        | Jest unit tests                               |
+| `npx nx typecheck mobile`   | TypeScript project references / declarations  |
+| `npx nx graph`              | Interactive project dependency graph          |
 
 List all targets for the app:
 
@@ -85,11 +87,46 @@ Playwright tests live in `apps/mobile-e2e`. They depend on the mobile web previe
 npx nx e2e @fix-my-chess/mobile-e2e
 ```
 
+## Android release builds (GitHub Actions)
+
+`.github/workflows/android-release.yml` runs lint, typecheck and tests, then builds a release APK with Gradle:
+
+| Trigger                                    | Result                                                                      |
+| ------------------------------------------ | --------------------------------------------------------------------------- |
+| Pull request / push to `main` / manual run | APK uploaded as the `fix-my-chess-apk` workflow artifact                    |
+| Push a tag `vX.Y.Z`                        | Same, plus a GitHub Release with the APK attached (`versionName` = `X.Y.Z`) |
+
+`versionCode` is the workflow run number, so every build installs over the previous one.
+
+### Signing
+
+Without secrets, the APK is signed with the repo's debug keystore: installable for testing, but not suitable for the Play Store. For real releases, create an upload key once:
+
+```sh
+keytool -genkeypair -v -storetype PKCS12 -keystore release.keystore \
+  -alias fixmychess -keyalg RSA -keysize 2048 -validity 10000
+base64 -w0 release.keystore   # macOS: base64 -i release.keystore
+```
+
+Then add these repository secrets (Settings → Secrets and variables → Actions):
+
+- `ANDROID_KEYSTORE_BASE64`: the base64 output above
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`: e.g. `fixmychess`
+- `ANDROID_KEY_PASSWORD`
+
+Keep the keystore safe and out of git (`*.keystore` and `*.jks` are ignored). If you lose it, you can't publish updates to the same app.
+
+To build a signed APK locally, export `FMC_UPLOAD_STORE_FILE`, `FMC_UPLOAD_STORE_PASSWORD`, `FMC_UPLOAD_KEY_ALIAS` and `FMC_UPLOAD_KEY_PASSWORD`, then run `./gradlew assembleRelease` in `apps/mobile/android`.
+
 ## Repository layout
 
 ```
+.github/
+  workflows/       # CI: lint, typecheck, test and release APK build
 apps/
   mobile/          # React Native app (source under src/)
+    android/       # Native Android project (Gradle)
   mobile-e2e/      # Playwright E2E
 ```
 

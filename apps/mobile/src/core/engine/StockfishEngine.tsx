@@ -1,10 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import { View } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import type { EngineEvaluation, EvalRequest } from '../../shared/types';
@@ -17,8 +11,7 @@ export interface StockfishEngineHandle {
   destroy?: () => void;
 }
 
-const STOCKFISH_CDN =
-  'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js';
+const STOCKFISH_CDN = 'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js';
 
 const ENGINE_HTML = `
 <!DOCTYPE html>
@@ -98,56 +91,59 @@ export const StockfishEngine = forwardRef<StockfishEngineHandle>(
       webViewRef.current?.postMessage(cmd);
     }, []);
 
-    const handleMessage = useCallback((event: WebViewMessageEvent) => {
-      const line = event.nativeEvent.data;
+    const handleMessage = useCallback(
+      (event: WebViewMessageEvent) => {
+        const line = event.nativeEvent.data;
 
-      if (line.startsWith('__ENGINE_ERROR__:')) {
-        const errMsg = line.slice('__ENGINE_ERROR__:'.length);
-        if (pendingRef.current) {
-          clearTimeout(pendingRef.current.timer);
-          pendingRef.current.reject(new Error(`Engine error: ${errMsg}`));
+        if (line.startsWith('__ENGINE_ERROR__:')) {
+          const errMsg = line.slice('__ENGINE_ERROR__:'.length);
+          if (pendingRef.current) {
+            clearTimeout(pendingRef.current.timer);
+            pendingRef.current.reject(new Error(`Engine error: ${errMsg}`));
+            pendingRef.current = null;
+          }
+          return;
+        }
+
+        if (line === 'uciok') {
+          sendUci('isready');
+          return;
+        }
+
+        if (line === 'readyok') {
+          readyRef.current = true;
+          const resolvers = readyResolversRef.current.splice(0);
+          resolvers.forEach((r) => r());
+          return;
+        }
+
+        const pending = pendingRef.current;
+        if (!pending) return;
+
+        if (line.startsWith('info') && line.includes(' score ')) {
+          parseInfoLine(line, pending);
+        }
+
+        if (line.startsWith('bestmove')) {
+          clearTimeout(pending.timer);
+          const bestMove = line.split(' ')[1] ?? '';
+          pending.bestMove = bestMove;
+
+          const result: EngineEvaluation = {
+            fen: pending.fen,
+            score: pending.score,
+            bestMove: pending.bestMove,
+            depth: pending.currentDepth,
+            isMate: pending.isMate,
+            mateIn: pending.mateIn,
+          };
+
+          pending.resolve(result);
           pendingRef.current = null;
         }
-        return;
-      }
-
-      if (line === 'uciok') {
-        sendUci('isready');
-        return;
-      }
-
-      if (line === 'readyok') {
-        readyRef.current = true;
-        const resolvers = readyResolversRef.current.splice(0);
-        resolvers.forEach((r) => r());
-        return;
-      }
-
-      const pending = pendingRef.current;
-      if (!pending) return;
-
-      if (line.startsWith('info') && line.includes(' score ')) {
-        parseInfoLine(line, pending);
-      }
-
-      if (line.startsWith('bestmove')) {
-        clearTimeout(pending.timer);
-        const bestMove = line.split(' ')[1] ?? '';
-        pending.bestMove = bestMove;
-
-        const result: EngineEvaluation = {
-          fen: pending.fen,
-          score: pending.score,
-          bestMove: pending.bestMove,
-          depth: pending.currentDepth,
-          isMate: pending.isMate,
-          mateIn: pending.mateIn,
-        };
-
-        pending.resolve(result);
-        pendingRef.current = null;
-      }
-    }, [sendUci]);
+      },
+      [sendUci]
+    );
 
     const evaluate = useCallback(
       (request: EvalRequest): Promise<EngineEvaluation> => {
@@ -167,7 +163,7 @@ export const StockfishEngine = forwardRef<StockfishEngineHandle>(
             sendUci('stop');
             if (pendingRef.current) {
               pendingRef.current.reject(
-                new Error(`Evaluation timed out after ${EVAL_TIMEOUT_MS}ms`),
+                new Error(`Evaluation timed out after ${EVAL_TIMEOUT_MS}ms`)
               );
               pendingRef.current = null;
             }
@@ -191,7 +187,7 @@ export const StockfishEngine = forwardRef<StockfishEngineHandle>(
           sendUci(`go depth ${request.depth}`);
         });
       },
-      [sendUci],
+      [sendUci]
     );
 
     const stop = useCallback(() => {
@@ -238,7 +234,7 @@ export const StockfishEngine = forwardRef<StockfishEngineHandle>(
         />
       </View>
     );
-  },
+  }
 );
 
 function parseInfoLine(line: string, pending: PendingEval): void {

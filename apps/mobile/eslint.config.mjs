@@ -8,6 +8,8 @@ export default [
     files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
+      // Web-only rule (expects <span>); React Native uses role/aria-label on <Text> instead.
+      'jsx-a11y/accessible-emoji': 'off',
     },
   },
   {

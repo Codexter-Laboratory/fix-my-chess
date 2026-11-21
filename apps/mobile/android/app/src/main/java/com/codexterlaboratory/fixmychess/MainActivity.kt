@@ -1,11 +1,21 @@
-package com.mobile
+package com.codexterlaboratory.fixmychess
 
+import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 
 class MainActivity : ReactActivity() {
+
+  /**
+   * react-native-screens cannot restore its fragments, so drop the saved state. Without this the
+   * app crashes whenever Android recreates the activity (rotation, theme change, process death).
+   * https://github.com/software-mansion/react-native-screens#android
+   */
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(null)
+  }
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule

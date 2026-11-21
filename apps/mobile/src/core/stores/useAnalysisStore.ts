@@ -3,13 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { BlunderPuzzle, ChessComGame, OpeningStats } from '../../shared/types';
 import { createPlatformStorage } from './storage';
 
-type AnalysisPhase =
-  | 'idle'
-  | 'fetching'
-  | 'analyzing'
-  | 'detecting'
-  | 'complete'
-  | 'error';
+type AnalysisPhase = 'idle' | 'fetching' | 'analyzing' | 'detecting' | 'complete' | 'error';
 
 export interface WinLossStats {
   readonly totalGames: number;
@@ -88,8 +82,8 @@ export const useAnalysisStore = create<AnalysisState>()(
         winLossStats: state.winLossStats,
         lastFetchedAt: state.lastFetchedAt,
       }),
-    },
-  ),
+    }
+  )
 );
 
 /**

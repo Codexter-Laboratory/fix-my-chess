@@ -26,7 +26,7 @@ const mockRoute = {
 
 test('HomeScreen renders app title and input', () => {
   const { getByTestId } = render(
-    <HomeScreen navigation={mockNavigation as never} route={mockRoute as never} />,
+    <HomeScreen navigation={mockNavigation as never} route={mockRoute as never} />
   );
   expect(getByTestId('heading')).toHaveTextContent(/Fix My Chess/);
   expect(getByTestId('username-input')).toBeTruthy();

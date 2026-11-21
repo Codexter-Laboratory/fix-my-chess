@@ -111,7 +111,7 @@ export const PuzzleSolver = React.memo(function PuzzleSolver({
       const verdict: MoveVerdict = validatePuzzleMove(
         puzzle.fenBeforeBlunder,
         attempt,
-        puzzle.bestMove,
+        puzzle.bestMove
       );
 
       if (verdict === 'illegal') return false;
@@ -162,7 +162,7 @@ export const PuzzleSolver = React.memo(function PuzzleSolver({
       recordFailedAttempt,
       triggerHaptic,
       onSolved,
-    ],
+    ]
   );
 
   // ----- Only allow dragging the side-to-move's pieces -----
@@ -173,7 +173,7 @@ export const PuzzleSolver = React.memo(function PuzzleSolver({
       const pieceColor = piece[0] === 'w' ? 'white' : 'black';
       return pieceColor === colorToMove;
     },
-    [solved, lives, puzzle.fenBeforeBlunder],
+    [solved, lives, puzzle.fenBeforeBlunder]
   );
 
   // ----- Render -----
@@ -181,9 +181,7 @@ export const PuzzleSolver = React.memo(function PuzzleSolver({
     <View className="flex-1 bg-slate-950">
       {/* Header */}
       <View className="px-4 pb-2 pt-4">
-        <Text className="text-center text-lg font-semibold text-slate-100">
-          Find the best move
-        </Text>
+        <Text className="text-center text-lg font-semibold text-slate-100">Find the best move</Text>
         <Text className="mt-1 text-center text-xs text-slate-400">
           Move {puzzle.moveNumber} · You played{' '}
           <Text className="font-mono text-red-400">{puzzle.badMove}</Text>
@@ -241,10 +239,7 @@ export const PuzzleSolver = React.memo(function PuzzleSolver({
         )}
 
         {solved && (
-          <TouchableOpacity
-            className="rounded-lg bg-emerald-600 px-6 py-2.5"
-            onPress={onNext}
-          >
+          <TouchableOpacity className="rounded-lg bg-emerald-600 px-6 py-2.5" onPress={onNext}>
             <Text className="font-semibold text-white">Next Puzzle</Text>
           </TouchableOpacity>
         )}
@@ -255,10 +250,7 @@ export const PuzzleSolver = React.memo(function PuzzleSolver({
               Out of tries! The best move was{' '}
               <Text className="font-mono font-bold">{puzzle.bestMove}</Text>
             </Text>
-            <TouchableOpacity
-              className="rounded-lg bg-slate-700 px-6 py-2.5"
-              onPress={onNext}
-            >
+            <TouchableOpacity className="rounded-lg bg-slate-700 px-6 py-2.5" onPress={onNext}>
               <Text className="font-semibold text-slate-100">Next Puzzle</Text>
             </TouchableOpacity>
           </View>

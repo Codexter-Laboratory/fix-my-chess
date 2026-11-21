@@ -11,19 +11,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  fetchPlayerProfile,
-  hasRecentGames,
-} from '../../../core/api/chessCom';
+import { fetchPlayerProfile, hasRecentGames } from '../../../core/api/chessCom';
 import type { HomeScreenProps } from '../../../app/navigation/types';
 
 type EmptyState = 'not-found' | 'no-recent-games' | null;
 
 const DEMO_USERNAME = 'hikaru';
 
-export function HomeScreen({
-  navigation,
-}: HomeScreenProps): React.ReactElement {
+export function HomeScreen({ navigation }: HomeScreenProps): React.ReactElement {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [emptyState, setEmptyState] = useState<EmptyState>(null);
@@ -33,14 +28,14 @@ export function HomeScreen({
       setInputValue(text);
       if (emptyState) setEmptyState(null);
     },
-    [emptyState],
+    [emptyState]
   );
 
   const navigateToAnalysis = useCallback(
     (username: string) => {
       navigation.navigate('Loading', { username });
     },
-    [navigation],
+    [navigation]
   );
 
   const handleSubmit = useCallback(async () => {
@@ -88,10 +83,7 @@ export function HomeScreen({
   const canSubmit = inputValue.trim().length > 0 && !isLoading;
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-slate-900"
-      style={{ flex: 1, backgroundColor: '#0f172a' }}
-    >
+    <SafeAreaView className="flex-1 bg-slate-900" style={{ flex: 1, backgroundColor: '#0f172a' }}>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -105,10 +97,7 @@ export function HomeScreen({
               <Text className="text-3xl">♟</Text>
             </View>
 
-            <Text
-              className="mb-2 text-center text-4xl font-extrabold text-white"
-              testID="heading"
-            >
+            <Text className="mb-2 text-center text-4xl font-extrabold text-white" testID="heading">
               Fix My Chess
             </Text>
 
@@ -147,9 +136,7 @@ export function HomeScreen({
             {/* CTA Button */}
             <TouchableOpacity
               className={`w-5/6 items-center rounded-xl p-4 ${
-                canSubmit
-                  ? 'bg-indigo-600 active:bg-indigo-700'
-                  : 'bg-slate-700'
+                canSubmit ? 'bg-indigo-600 active:bg-indigo-700' : 'bg-slate-700'
               }`}
               onPress={handleSubmit}
               disabled={!canSubmit}
@@ -159,9 +146,7 @@ export function HomeScreen({
               {isLoading ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
-                <Text className="text-base font-bold text-white">
-                  Analyze My Games
-                </Text>
+                <Text className="text-base font-bold text-white">Analyze My Games</Text>
               )}
             </TouchableOpacity>
 
@@ -170,12 +155,10 @@ export function HomeScreen({
               <View className="mt-6 w-5/6 overflow-hidden rounded-2xl border border-amber-500/30 bg-amber-950/30">
                 <View className="h-1 bg-amber-500" />
                 <View className="p-5">
-                  <Text className="text-base font-bold text-white">
-                    No recent games found.
-                  </Text>
+                  <Text className="text-base font-bold text-white">No recent games found.</Text>
                   <Text className="mt-2 text-sm leading-5 text-slate-400">
-                    Play a match on Chess.com to generate your blunder deck, or
-                    see how the app works using a Grandmaster's games.
+                    Play a match on Chess.com to generate your blunder deck, or see how the app
+                    works using a Grandmaster's games.
                   </Text>
 
                   <TouchableOpacity
@@ -183,9 +166,7 @@ export function HomeScreen({
                     onPress={handleLoadDemo}
                     activeOpacity={0.8}
                   >
-                    <Text className="text-base font-bold text-white">
-                      Load Demo (Hikaru)
-                    </Text>
+                    <Text className="text-base font-bold text-white">Load Demo (Hikaru)</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -194,8 +175,8 @@ export function HomeScreen({
             {/* Footer hint — only when no empty state */}
             {!emptyState && (
               <Text className="mt-8 text-center text-xs text-slate-600">
-                We fetch your public games from Chess.com{'\n'}and find where
-                you leak rating points.
+                We fetch your public games from Chess.com{'\n'}and find where you leak rating
+                points.
               </Text>
             )}
           </View>
